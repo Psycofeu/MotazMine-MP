@@ -1161,6 +1161,13 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 		return $this->sleeping !== null;
 	}
 
+	/**
+	 * @return SurvivalBlockBreakHandler|null
+	 */
+	public function getBlockBreakHandler() : ?SurvivalBlockBreakHandler{
+		return $this->blockBreakHandler;
+	}
+
 	public function sleepOn(Vector3 $pos) : bool{
 		$pos = $pos->floor();
 		$b = $this->getWorld()->getBlock($pos);
@@ -1561,8 +1568,13 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 				Timings::$playerCheckNearEntities->stopTiming();
 			}
 
-			if($this->blockBreakHandler !== null && !$this->blockBreakHandler->update()){
-				$this->blockBreakHandler = null;
+			if($this->blockBreakHandler !== null){
+				if($this->blockBreakHandler->getBreakProgress() >= 1) {
+					$this->breakBlock($this->blockBreakHandler->getBlockPos());
+					$this->blockBreakHandler = null;
+				}
+
+				$this->blockBreakHandler?->update();
 			}
 
 			if($this->isUsingItem() && $this->getItemUseDuration() % 4 === 0 && ($item = $this->inventory->getItemInHand()) instanceof ConsumableItem){
