@@ -193,7 +193,7 @@ abstract class Living extends Entity{
 				$duration = $e->getInt(self::TAG_EFFECT_DURATION);
 				$this->effectManager->add(new EffectInstance(
 					$effect,
-					$duration === -1 ? Limits::INT32_MAX : $duration,
+					$duration,
 					Binary::unsignByte($e->getByte(self::TAG_EFFECT_AMPLIFIER)),
 					$e->getByte(self::TAG_EFFECT_SHOW_PARTICLES, 1) !== 0,
 					$e->getByte(self::TAG_EFFECT_AMBIENT, 0) !== 0,
@@ -324,7 +324,7 @@ abstract class Living extends Entity{
 				$effects[] = CompoundTag::create()
 					->setByte(self::TAG_EFFECT_ID, EffectIdMap::getInstance()->toId($effect->getType()))
 					->setByte(self::TAG_EFFECT_AMPLIFIER, Binary::signByte($effect->getAmplifier()))
-					->setInt(self::TAG_EFFECT_DURATION, $effect->isInfinite() ? -1 : $effect->getDuration())
+					->setInt(self::TAG_EFFECT_DURATION, $effect->getDuration())
 					->setByte(self::TAG_EFFECT_AMBIENT, $effect->isAmbient() ? 1 : 0)
 					->setByte(self::TAG_EFFECT_SHOW_PARTICLES, $effect->isVisible() ? 1 : 0);
 			}
@@ -453,8 +453,11 @@ abstract class Living extends Entity{
 			$source->setModifier(-$this->lastDamageCause->getBaseDamage(), EntityDamageEvent::MODIFIER_PREVIOUS_DAMAGE_COOLDOWN);
 		}
 		if($source->canBeReducedByArmor()){
-			//MCPE uses the same system as PC did pre-1.9
-			$source->setModifier(-$source->getFinalDamage() * $this->getArmorPoints() * 0.04, EntityDamageEvent::MODIFIER_ARMOR);
+			$armorPoint = $this->getArmorPoints();
+			if($armorPoint >= 1){
+				$modifier = -$source->getFinalDamage() * $armorPoint / ($armorPoint + 7);
+				$source->setModifier($modifier, EntityDamageEvent::MODIFIER_ARMOR);
+			}
 		}
 
 		$cause = $source->getCause();

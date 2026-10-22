@@ -30,7 +30,7 @@ use function is_int;
 use function str_repeat;
 
 final class VersionInfo{
-	public const NAME = "Axolotl-PM";
+	public const NAME = "MotazMine-MP";
 	public const BASE_VERSION = "5.50.1";
 	public const IS_DEVELOPMENT_BUILD = true;
 	public const BUILD_CHANNEL = "stable";

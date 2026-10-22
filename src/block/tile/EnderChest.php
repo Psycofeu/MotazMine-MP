@@ -34,10 +34,8 @@ class EnderChest extends Spawnable{
 	}
 
 	public function setViewerCount(int $viewerCount) : void{
-		if($viewerCount < 0){
-			throw new \InvalidArgumentException('Viewer count cannot be negative');
-		}
-		$this->viewerCount = $viewerCount;
+
+		$this->viewerCount = max(0, $viewerCount);
 	}
 
 	public function readSaveData(CompoundTag $nbt) : void{

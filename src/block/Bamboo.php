@@ -207,7 +207,7 @@ class Bamboo extends Transparent{
 			$newBlocks[] = $bigLeavesBlock;
 			$newBlocks[] = $smallLeavesBlock;
 			for($i = 0, $max = min($growAmount, $newHeight - count($newBlocks)); $i < $max; ++$i){
-				$newBlocks[] = $stemBlock; //to replace the bottom blocks that currently have leaves
+				$newBlocks[] = $stemBlock;
 			}
 		}
 
@@ -233,7 +233,7 @@ class Bamboo extends Transparent{
 		$world = $this->position->getWorld();
 		if($this->ready){
 			$this->ready = false;
-			if($world->getFullLight($this->position) < 9 || !$this->grow(self::getMaxHeight($this->position->getFloorX(), $this->position->getFloorZ()), 1, null)){
+			if(!$this->grow(self::getMaxHeight($this->position->getFloorX(), $this->position->getFloorZ()), 1, null)){
 				$world->setBlock($this->position, $this);
 			}
 		}elseif($world->getBlock($this->position->up())->canBeReplaced()){
